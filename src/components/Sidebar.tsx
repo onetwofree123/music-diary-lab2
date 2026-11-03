@@ -1,22 +1,25 @@
-function Sidebar() {
-    return (
-        <aside className = "sidebar">
-          <header className = "sidebar-header">
-            <div className = "logo">
-                <span className = "logo-mark" aria-hidden="true">♪</span>
-            </div>
-          </header>
+import { NavLink } from 'react-router-dom'
 
-          <nav className = "sidebar-nav" aria-label ="Навигация по сайту">
-            <a className = "nav-link" href = "/">Главная</a>
-            <a className = "nav-link" href = "/tracks">Коллекция</a>
-            <a className = "nav-link" href = "/diary">Дневник</a>
-            <a className = "nav-link" href = "/memories">Воспоминания</a>
-            <a className = "nav-link" href = "/stats">Статистика</a>
-            <a className = "nav-link" href = "/profile">Профиль</a>
-        </nav>
-        </aside>
-    )
+function Sidebar() {
+  return (
+    <aside className="sidebar">
+      <header className="sidebar-header">
+        <div className="logo">
+          <span className="logo-mark" aria-hidden="true">♪</span>
+          <span className="logo-text">Music Diary</span>
+        </div>
+      </header>
+
+      <nav className="sidebar-nav" aria-label="Навигация по сайту">
+        <NavLink className="nav-link" to="/" end>Главная</NavLink>
+        <NavLink className="nav-link" to="/collection">Коллекция</NavLink>
+        <NavLink className="nav-link" to="/diary">Дневник</NavLink>
+        <NavLink className="nav-link" to="/memories">Воспоминания</NavLink>
+        <NavLink className="nav-link" to="/stats">Статистика</NavLink>
+        <NavLink className="nav-link" to="/profile">Профиль</NavLink>
+      </nav>
+    </aside>
+  )
 }
 
 export default Sidebar

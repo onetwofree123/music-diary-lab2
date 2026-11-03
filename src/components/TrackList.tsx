@@ -7,11 +7,11 @@ interface TrackListProps {
 
 function TrackList({ tracks }: TrackListProps) {
   if (tracks.length === 0) {
-    return <p>В коллекции пока нет треков.</p>
+    return <p className="empty-message">Треки не найдены.</p>
   }
 
   return (
-    <div className="track-list">
+    <div className="cards-grid">
       {tracks.map((track) => (
         <TrackCard key={track.id} track={track} />
       ))}
