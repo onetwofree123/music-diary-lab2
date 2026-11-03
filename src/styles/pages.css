@@ -47,8 +47,9 @@
 .track-artwork {
   position: relative;
   display: grid;
-  height: min(54vh, 560px);
-  min-height: 340px;
+  width: min(100%, 480px);
+  aspect-ratio: 1;
+  margin: 0 auto;
   place-items: center;
   overflow: hidden;
   isolation: isolate;
@@ -73,6 +74,10 @@
 .track-facts div { min-width: 0; padding: 16px; background: rgba(10, 10, 10, 0.38); }
 .track-facts dt { margin-bottom: 6px; color: var(--muted); font-size: 0.82rem; }
 .track-facts dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.track-navigation { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; }
+.track-navigation .primary-button, .track-navigation .secondary-button { min-width: 170px; }
+.track-navigation button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+.track-position { color: var(--muted); font-size: 0.9rem; }
 .toolbar { margin-bottom: 22px; }
 .search-label { display: grid; gap: 8px; max-width: 720px; margin-bottom: 8px; }
 .search-results { max-width: 720px; }

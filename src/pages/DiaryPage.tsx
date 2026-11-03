@@ -4,8 +4,11 @@ import type { DiaryEntry } from '../types/diary'
 
 interface DiaryPageProps {
   entries: DiaryEntry[]
-  onSaveEntry: (entry: DiaryEntry) => void
-  onDeleteEntry: (id: number) => void
+  entriesLoading: boolean
+  entriesError: string
+  onRetryEntries: () => void
+  onSaveEntry: (entry: DiaryEntry) => Promise<void>
+  onDeleteEntry: (id: number) => Promise<void>
 }
 
 interface EntryForm {
@@ -45,12 +48,21 @@ function readImage(file: File): Promise<string> {
   })
 }
 
-function DiaryPage({ entries, onSaveEntry, onDeleteEntry }: DiaryPageProps) {
+function DiaryPage({
+  entries,
+  entriesLoading,
+  entriesError,
+  onRetryEntries,
+  onSaveEntry,
+  onDeleteEntry,
+}: DiaryPageProps) {
   const [form, setForm] = useState<EntryForm>(emptyForm)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [photo, setPhoto] = useState<string | undefined>()
   const [formError, setFormError] = useState('')
   const [expanded, setExpanded] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
 
   function updateField(field: keyof EntryForm, value: string): void {
     setForm((currentForm) => ({ ...currentForm, [field]: value }))
@@ -75,7 +87,7 @@ function DiaryPage({ entries, onSaveEntry, onDeleteEntry }: DiaryPageProps) {
     setFormError('')
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     const rating = Number(form.rating)
 
@@ -106,9 +118,28 @@ function DiaryPage({ entries, onSaveEntry, onDeleteEntry }: DiaryPageProps) {
       }),
     }
 
-    onSaveEntry(entry)
-    resetForm()
-    setExpanded(true)
+    setIsSaving(true)
+    try {
+      await onSaveEntry(entry)
+      resetForm()
+      setExpanded(true)
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : 'Не удалось сохранить запись.')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function handleDeleteEntry(id: number): Promise<void> {
+    setDeletingId(id)
+    setFormError('')
+    try {
+      await onDeleteEntry(id)
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : 'Не удалось удалить запись.')
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   function startEditing(entry: DiaryEntry): void {
@@ -188,7 +219,9 @@ function DiaryPage({ entries, onSaveEntry, onDeleteEntry }: DiaryPageProps) {
           </div>
           {formError && <p className="form-error" role="alert">{formError}</p>}
           <div className="form-actions">
-            <button type="submit" className="primary-button">{editingId ? 'Сохранить изменения' : 'Сохранить запись'}</button>
+            <button type="submit" className="primary-button" disabled={isSaving}>
+              {isSaving ? 'Сохраняем...' : editingId ? 'Сохранить изменения' : 'Сохранить запись'}
+            </button>
             {editingId !== null && <button type="button" className="secondary-button" onClick={resetForm}>Отменить редактирование</button>}
           </div>
         </form>
@@ -200,7 +233,16 @@ function DiaryPage({ entries, onSaveEntry, onDeleteEntry }: DiaryPageProps) {
           </button>
           {expanded && (
             <div className="saved-entries-panel">
-              {entries.length === 0 ? (
+              {entriesLoading ? (
+                <p role="status">Загружаем записи...</p>
+              ) : entriesError ? (
+                <div role="alert">
+                  <p>{entriesError}</p>
+                  <button className="secondary-button" type="button" onClick={onRetryEntries}>
+                    Повторить загрузку
+                  </button>
+                </div>
+              ) : entries.length === 0 ? (
                 <p className="empty-message">Записей пока нет.</p>
               ) : (
                 <div className="saved-entries">
@@ -215,7 +257,14 @@ function DiaryPage({ entries, onSaveEntry, onDeleteEntry }: DiaryPageProps) {
                       {entry.memory?.description && <p className="entry-memory-link">{entry.memory.description}</p>}
                       <div className="entry-actions">
                         <button className="secondary-button" type="button" onClick={() => startEditing(entry)}>Редактировать</button>
-                        <button className="delete-button" type="button" onClick={() => onDeleteEntry(entry.id)}>Удалить</button>
+                        <button
+                          className="delete-button"
+                          type="button"
+                          disabled={deletingId === entry.id}
+                          onClick={() => void handleDeleteEntry(entry.id)}
+                        >
+                          {deletingId === entry.id ? 'Удаляем...' : 'Удалить'}
+                        </button>
                       </div>
                     </article>
                   ))}

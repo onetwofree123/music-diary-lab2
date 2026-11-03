@@ -6,9 +6,11 @@
   .popular-section { margin-top: 26px; }
   .memory-fields { padding: 14px; }
   .track-detail-panel { padding: 22px 16px; }
-  .track-artwork { height: 48vh; min-height: 280px; border-radius: 18px; }
+  .track-artwork { width: min(100%, 420px); border-radius: 18px; }
   .track-details { padding-top: 24px; }
   .artwork-mark { font-size: 7rem; }
+  .track-navigation { gap: 10px; }
+  .track-navigation .primary-button, .track-navigation .secondary-button { min-width: 0; padding: 10px 12px; }
 }
 
 @media (max-width: 520px) {
@@ -17,7 +19,9 @@
   .nav-link { padding: 8px; font-size: 0.95rem; }
   .main-panel { padding: 20px 14px; }
   .page-header h1 { font-size: 2rem; }
-  .track-artwork { min-height: 230px; }
+  .track-artwork { width: 100%; }
   .track-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .saved-entry-header { flex-wrap: wrap; }
+  .track-navigation { flex-wrap: wrap; }
+  .track-position { order: -1; width: 100%; text-align: center; }
 }

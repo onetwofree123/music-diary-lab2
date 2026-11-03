@@ -8,6 +8,7 @@ interface TrackDetailsPageProps {
 function TrackDetailsPage({ tracks }: TrackDetailsPageProps) {
   const { id } = useParams()
   const track = tracks.find((item) => item.id === Number(id))
+  const trackIndex = tracks.findIndex((item) => item.id === Number(id))
 
   if (!track) {
     return (
@@ -41,6 +42,27 @@ function TrackDetailsPage({ tracks }: TrackDetailsPageProps) {
             <div><dt>Длительность</dt><dd>{track.duration}</dd></div>
           </dl>
         </div>
+        <nav className="track-navigation" aria-label="Переключение между треками">
+          {trackIndex > 0 ? (
+            <Link className="secondary-button" to={`/tracks/${tracks[trackIndex - 1].id}`}>
+              ← Предыдущий трек
+            </Link>
+          ) : (
+            <button className="secondary-button" type="button" disabled>
+              ← Предыдущий трек
+            </button>
+          )}
+          <span className="track-position">{trackIndex + 1} из {tracks.length}</span>
+          {trackIndex < tracks.length - 1 ? (
+            <Link className="primary-button" to={`/tracks/${tracks[trackIndex + 1].id}`}>
+              Следующий трек →
+            </Link>
+          ) : (
+            <button className="primary-button" type="button" disabled>
+              Следующий трек →
+            </button>
+          )}
+        </nav>
       </section>
     </div>
   )

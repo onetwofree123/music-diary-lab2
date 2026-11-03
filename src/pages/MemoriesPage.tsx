@@ -19,7 +19,15 @@ function MemoriesPage({ entries }: MemoriesPageProps) {
           <div className="memory-grid" aria-live="polite">
             {memories.map((entry) => (
               <article className="memory-card" key={entry.id}>
-                {entry.memory?.photo && <img className="memory-photo" src={entry.memory.photo} alt={entry.memory.place || `Воспоминание о ${entry.trackTitle}`} />}
+                {entry.memory?.photo && (
+                  <div className="memory-cover">
+                    <img
+                      className="memory-photo"
+                      src={entry.memory.photo}
+                      alt={entry.memory.place || `Воспоминание о ${entry.trackTitle}`}
+                    />
+                  </div>
+                )}
                 <div className="memory-body">
                   <span className="memory-date">{entry.dateHeard}</span>
                   <h3>{entry.memory?.place || entry.trackTitle}</h3>
