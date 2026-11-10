@@ -35,3 +35,19 @@ export async function getTracks(): Promise<Track[]> {
 
   return data
 }
+
+export async function getTrackById(id: number): Promise<Track> {
+  const response = await fetch(`http://localhost:3001/tracks/${id}`)
+
+  if (!response.ok) {
+    throw new Error(`Не удалось загрузить трек: HTTP ${response.status}`)
+  }
+
+  const data: unknown = await response.json()
+
+  if (!isTrack(data)) {
+    throw new Error('API вернуло трек в неожиданном формате.')
+  }
+
+  return data
+}
